@@ -1,0 +1,175 @@
+ <div>
+  <div class="p-4 m-4">
+     <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Configuration Options</h1>
+        <nav class="flex flex-wrap gap-4">
+           <button (click)="selectedSection='edit-xslt'"
+           [ngClass]="selectedSection==='edit-xslt' ? 'bg-sage text-white' : 'bg-white text-sage dark:text-sagehover hover:bg-sagehover hover:text-white dark:hover:bg-gray-700'"
+           class="px-4 py-2 text-sm font-medium rounded-md transition-colors">
+           Edit XSLT
+           </button>
+           <button (click)="selectedSection='test-xslt'"
+           [ngClass]="selectedSection==='test-xslt' ? 'bg-sage text-white' : 'bg-white text-sage dark:text-sagehover hover:bg-sagehover hover:text-white dark:hover:bg-gray-700'"
+           class="px-4 py-2 text-sm font-medium rounded-md transition-colors">
+           Test XSLT
+           </button>
+           <button (click)="selectedSection='manage-data'"
+           [ngClass]="selectedSection==='manage-data' ? 'bg-sage text-white' : 'bg-white text-sage dark:text-sagehover hover:bg-sagehover hover:text-white dark:hover:bg-gray-700'"
+           class="px-4 py-2 text-sm font-medium rounded-md transition-colors">
+           Manage Data
+           </button>
+        </nav>
+     </div>
+     <div class="settings-container space-y-6">
+        <div *ngIf="selectedSection === 'edit-xslt'" class="section space-y-4" id="edit-xslt">
+           <div class="p-6 m-4 rounded-lg border transition-all dark:border-gray-700 border-sage border-t-4">
+              <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Edit XSLT</h2>
+              <div class="form-group">
+                 <label for="xsltBlock" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select XSLT Block:</label>
+                 <select id="xsltBlock" name="xsltBlock" [(ngModel)]="xsltBlock" (change)="loadXSLTContent()"
+                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-sage focus:border-sage dark:bg-gray-700 dark:text-white">
+                 <option value="MetadataXSLT">MetadataXSLT</option>
+                 <option value="AllergyXSLT">AllergyXSLT</option>
+                 <option value="MedicationsXSLT">MedicationsXSLT</option>
+                 <option value="ProblemsXSLT">ProblemsXSLT</option>
+                 <option value="ProceduresXSLT">ProceduresXSLT</option>
+                 <option value="ResultsXSLT">ResultsXSLT</option>
+                 <option value="VitalSignsXSLT">VitalSignsXSLT</option>
+                 <option value="ImmunizationsXSLT">ImmunizationsXSLT</option>
+                 <option value="PlanOfCareXSLT">PlanOfCareXSLT</option>
+                 <option value="SocialHistoryXSLT">SocialHistoryXSLT</option>
+                 <option value="FunctionalStatusXSLT">FunctionalStatusXSLT</option>
+                 <option value="FamilyHistoryXSLT">FamilyHistoryXSLT</option>
+                 <option value="AdvanceDirectiveXSLT">AdvanceDirectiveXSLT</option>
+                 <option value="EncounterXSLT">EncounterXSLT</option>
+                 <option value="PayerXSLT">PayerXSLT</option>
+                 <option value="PatientXSLT">PatientXSLT</option>
+                 <option value="DiagnosisXSLT">DiagnosisXSLT</option>
+                 <option value="ImplantsXSLT">ImplantsXSLT</option>
+                 <option value="GoalsXSLT">GoalsXSLT</option>
+                 <option value="EncompassingEncounterXSLT">EncompassingEncounterXSLT</option>
+                 </select>
+              </div>
+              <div class="form-group">
+                 <label for="xpathContent" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Edit XPath Expressions:</label>
+                 <div
+                 id="xpathContent"
+                 class="editable-div w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-sage focus:border-sage dark:bg-gray-700 dark:text-white min-h-[100px]"
+                 contenteditable="true"
+                 (input)="onEditableInput($event)"
+                 #editableDiv>
+              </div>
+           </div>
+           <div class="form-group">
+              <button type="button" (click)="saveXPaths()"
+                 class="w-full px-4 py-2 bg-sage hover:bg-sagehover text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage transition-colors duration-200">
+              Save XPaths
+              </button>
+           </div>
+        </div>
+     </div>
+     <div *ngIf="selectedSection === 'test-xslt'" class="section space-y-4" id="test-xslt">
+        <div class="p-6 m-4 rounded-lg border transition-all dark:border-gray-700 border-sage border-t-4">
+           <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Test XSLT</h2>
+           <div class="form-group">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select XSLT Block to Test:</label>
+              <select id="testXsltBlock" name="testXsltBlock" [(ngModel)]="testXsltBlock" (change)="loadTestXSLTContent()"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-sage focus:border-sage dark:bg-gray-700 dark:text-white">
+              <option value="MetadataXSLT">MetadataXSLT</option>
+              <option value="AllergyXSLT">AllergyXSLT</option>
+              <option value="MedicationsXSLT">MedicationsXSLT</option>
+              <option value="ProblemsXSLT">ProblemsXSLT</option>
+              <option value="ProceduresXSLT">ProceduresXSLT</option>
+              <option value="ResultsXSLT">ResultsXSLT</option>
+              <option value="VitalSignsXSLT">VitalSignsXSLT</option>
+              <option value="ImmunizationsXSLT">ImmunizationsXSLT</option>
+              <option value="PlanOfCareXSLT">PlanOfCareXSLT</option>
+              <option value="SocialHistoryXSLT">SocialHistoryXSLT</option>
+              <option value="FunctionalStatusXSLT">FunctionalStatusXSLT</option>
+              <option value="FamilyHistoryXSLT">FamilyHistoryXSLT</option>
+              <option value="AdvanceDirectiveXSLT">AdvanceDirectiveXSLT</option>
+              <option value="EncounterXSLT">EncounterXSLT</option>
+              <option value="PayerXSLT">PayerXSLT</option>
+              <option value="PatientXSLT">PatientXSLT</option>
+              <option value="DiagnosisXSLT">DiagnosisXSLT</option>
+              <option value="ImplantsXSLT">ImplantsXSLT</option>
+              <option value="GoalsXSLT">GoalsXSLT</option>
+              <option value="EncompassingEncounterXSLT">EncompassingEncounterXSLT</option>
+              </select>
+           </div>
+           <div class="form-group">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Path to CCD:</label>
+              <input id="sampleData" name="sampleData" [(ngModel)]="sampleData"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-sage focus:border-sage dark:bg-gray-700 dark:text-white"/>
+           </div>
+           <div class="form-group">
+              <button type="button" (click)="applyTestXSLT()"
+                 class="w-full px-4 py-2 bg-sage hover:bg-sagehover text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage transition-colors duration-200">
+              Apply XSLT
+              </button>
+           </div>
+           <div class="form-group">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transformed Output:</label>
+              <div id="transformedOutput" class="response-box w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-700 dark:text-white min-h-[100px]"></div>
+           </div>
+           <div class="form-group">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Current XSLT Source:</label>
+              <div class="response-box w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-700 dark:text-white min-h-[100px] overflow-auto">
+                 {{ testBlockContent }}
+              </div>
+           </div>
+        </div>
+     </div>
+     <div *ngIf="selectedSection === 'manage-data'" class="section space-y-4" id="manage-data">
+        <div class="p-6 m-4 rounded-lg border transition-all dark:border-gray-700 border-sage border-t-4">
+           <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Manage Data</h2>
+           <div class="form-group">
+            <label for="profileIDSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Select ProfileID to Delete Data:
+            </label>
+            <select id="profileIDSelect" name="profileIDSelect" [(ngModel)]="selectedProfileID"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-sage focus:border-sage dark:bg-gray-700 dark:text-white"
+              [disabled]="!profileIDs.length">
+              <option *ngFor="let id of profileIDs" [value]="id">{{ id }}</option>
+            </select>
+            <p *ngIf="!profileIDs.length" class="italic text-gray-500 mt-2">
+              No reports found.
+            </p>
+          </div>
+           <div class="form-group">
+              <button type="button" (click)="deleteProfileData()"
+                 class="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+              Delete Data for Selected ProfileID
+              </button>
+           </div>
+           <div class="form-group">
+              <button type="button" (click)="deleteAllData()"
+                 class="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+              Delete All Data
+              </button>
+           </div>
+        </div>
+     </div>
+  </div>
+  <button
+  *ngIf="showScrollTopButton"
+  (click)="scrollToTop()"
+  class="fixed bottom-8 right-8 w-10 h-10 bg-white dark:bg-gray-700 border-2 rounded-full flex items-center justify-center shadow-lg hover:bg-sage transition-all z-50"
+  style="border-color: rgb(6 78 59); color: rgb(6 78 59);">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <polyline points="8 14 12 10 16 14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
+</div>
+<div
+  class="fixed inset-x-0 bottom-4 flex justify-center z-50 p-4 pointer-events-none"
+>
+  <div class="flex flex-col gap-4 w-full max-w-3xl pointer-events-auto">
+    <app-alert-banner
+      *ngFor="let alert of currentAlerts; let i = index; trackBy: trackByIndex"
+      [alert]="alert"
+      (dismiss)="removeAlert(i)"
+    ></app-alert-banner>
+  </div>
+</div>
