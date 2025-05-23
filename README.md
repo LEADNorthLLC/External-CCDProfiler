@@ -1,7 +1,7 @@
 ## Installation Instructions
 
 ### Deploy Frontend Files
-- Copy the contents of `Angular/dist/ln-dpt/browser` into your CSP folder (e.g., `C:\InterSystems\HealthShareDemo\CSP\user\LeadNorth`).
+- Copy the contents of `Angular/dist/ln-dpt/browser` into your desired CSP folder (e.g., `C:\InterSystems\HealthShareDemo\CSP\user\LeadNorth`).
 
 ### Import Classes
 - Import the class definitions by loading the file `IRIS/LEADNorth.xml` into your InterSystems IRIS instance.
