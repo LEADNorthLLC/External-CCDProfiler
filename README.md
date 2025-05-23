@@ -15,7 +15,7 @@
   - **Enable Application:** Checked
   - **Inbound Web Services:** Enabled
   - Under **Security Settings**, select your desired authentication methods
-  - Under **CSP Files Physical Path**, specify the path to your installed `index.html` file (from step 1)
+  - Under **CSP Files Physical Path**, specify the path to your installed `index.html` file (from "Deploy Frontend Files")
 
 #### REST Web Application(see https://github.com/LEADNorthLLC/CCDProfiler/blob/main/IRIS/WebService.png)
 - **Name:** `/csp/LeadNorth/api`
