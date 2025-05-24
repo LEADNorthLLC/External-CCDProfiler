@@ -1,3 +1,8 @@
+# About
+LEAD North's CCD Profiler is a full-stack tool for profiling and analyzing CCDA documents leveraging InterSystems technology. Designed for healthcare developers and data analysts, this tool simplifies the process of importing, parsing, validating, and exporting CCD data.
+
+It supports both manual and automated (ZPM/IPM) installation, offers a dynamic Angular-based frontend, and enables users to manage XSLT transformations directly from the browser. The profiler generates summary dashboards and configurable Excel exports, making it ideal for quality assurance, data completeness checks, and interoperability validation.
+
 # Installation Instructions
 
 ## Option 1(Manual Installation):
