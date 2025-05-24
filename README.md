@@ -1,6 +1,6 @@
 # Installation Instructions
 
-## Option 1:
+## Option 1(Manual Installation):
 ### Deploy Frontend Files
 - Copy the contents of `Angular/dist/ln-dpt/browser` into your desired CSP folder (e.g., `C:\InterSystems\HealthShareDemo\CSP\user\LeadNorth`).
 
@@ -25,7 +25,7 @@
 
 - Open the tool by navigating to http://[server]:[port]/csp/LeadNorth/index.html#/index
   
-## Option 2:
+## Option 2(ZPM/IPM):
 - Download this repository as a zip file.
 - Extract all contents to a folder on your machine.
 - In terminal, open the ZPM shell and enter the following: load <path to extracted folder>
