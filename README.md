@@ -1,5 +1,6 @@
-## Installation Instructions
+# Installation Instructions
 
+## Option 1:
 ### Deploy Frontend Files
 - Copy the contents of `Angular/dist/ln-dpt/browser` into your desired CSP folder (e.g., `C:\InterSystems\HealthShareDemo\CSP\user\LeadNorth`).
 
@@ -21,4 +22,17 @@
 - **Name:** `/csp/LeadNorth/api`
 - **Description:** `LEAD North CCD Profiling Tool APIs`
 - **Dispatch class:** `LEADNorth.REST.Handler`
+
+- Open the tool by navigating to http://[server]:[port]/csp/LeadNorth/index.html#/index
   
+## Option 2:
+- Download this repository as a zip file.
+- Extract all contents to a folder on your machine.
+- In terminal, open the ZPM shell and enter the following: load <path to extracted folder>
+- Open the tool by navigating to http://[server]:[port]/csp/LeadNorth/index.html#/index
+
+
+# Getting Started
+1. Within the repository, there is a sample CCD(PHI safe)
+2. Goto this page http://[server]:[port]/csp/LeadNorth/index.html#/index and enter the directory where the sample file exists and provide a profile name. Click Start Import...
+3. Once the import is complete, you can view a quick summary on the home page, or you can navigate to the Reports section to get a more detailed breakdown of the data. From there, you can export the report to an excel sheet.
