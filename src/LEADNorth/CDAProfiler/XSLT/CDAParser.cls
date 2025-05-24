@@ -1,3 +1,4 @@
+/// This class contains compiled XSLT templates for transforming HL7 CDA documents into structured XML segments
 Class LEADNorth.CDAProfiler.XSLT.CDAParser Extends %Persistent
 {
 
@@ -6,9 +7,7 @@ XData MetadataXSLT
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:hl7="urn:hl7-org:v3" exclude-result-prefixes="hl7">
-    <xsl:output method="xml" indent="yes"/>
-
-  
+    <xsl:output method="xml" indent="yes"/> 
     <xsl:template match="/hl7:ClinicalDocument">
         <Metadata>
             <PatientID>
@@ -45,15 +44,37 @@ XData MetadataXSLT
             	<xsl:value-of select="hl7:confidentialityCode/@displayName"/>
             </DocumentConfidentialityCodeDisplay>
             <AllSections>
-			    <xsl:for-each select="hl7:component/hl7:structuredBody/hl7:component/hl7:section">
-			      <xsl:if test="position() &gt; 1">,</xsl:if>
-			      <xsl:value-of select="hl7:code/@displayName"/>
-			    </xsl:for-each>
+			  <xsl:for-each select="hl7:component/hl7:structuredBody/hl7:component/hl7:section">
+			    <xsl:if test="position() &gt; 1">, </xsl:if>
+			    <xsl:value-of select="hl7:code/@displayName"/>
+			    <xsl:text>(</xsl:text>
+			    <xsl:choose>
+			      <xsl:when test="not(@nullFlavor='NI') and 
+			                      string-length(normalize-space(hl7:text)) &gt; 0 and 
+			                      not(contains(hl7:text, 'may be documented'))">
+			        <xsl:text>has data</xsl:text>
+			      </xsl:when>
+			      <xsl:otherwise>
+			        <xsl:text>no data</xsl:text>
+			      </xsl:otherwise>
+			    </xsl:choose>
+			    <xsl:text>)</xsl:text>
+			  </xsl:for-each>
 			</AllSections>
-
+			<SectionsWithEncounterNumbers>
+        <xsl:for-each select="hl7:component/hl7:structuredBody/hl7:component/hl7:section[hl7:entry/hl7:encounter/hl7:id]">
+          <xsl:value-of select="hl7:code/@displayName"/>
+          <xsl:text>(</xsl:text>
+          <xsl:for-each select="hl7:entry/hl7:encounter/hl7:id">
+            <xsl:value-of select="@extension"/>
+            <xsl:if test="position() != last()">,</xsl:if>
+          </xsl:for-each>
+          <xsl:text>)</xsl:text>
+          <xsl:if test="position() != last()">, </xsl:if>
+        </xsl:for-each>
+      </SectionsWithEncounterNumbers>
         </Metadata>
     </xsl:template>
-    
 </xsl:stylesheet>
 }
 
@@ -992,7 +1013,7 @@ XData GoalsXSLT
     <xsl:output method="xml" indent="yes"/>
     <xsl:template match="/hl7:ClinicalDocument">
         <Goals>
-            <xsl:for-each select="hl7:component/hl7:structuredBody/hl7:component/hl7:section[hl7:code/@code='61146-7']/hl7:entry/hl7:act">
+            <xsl:for-each select="hl7:component/hl7:structuredBody/hl7:component/hl7:section[hl7:code/@code='61146-7']/hl7:entry/hl7:observation">
                 <Goal>
                     <GoalID>
                         <xsl:value-of select="hl7:id/@extension"/>
@@ -1328,11 +1349,11 @@ Storage Default
 <Value>%%CLASSNAME</Value>
 </Value>
 </Data>
-<DataLocation>^LEADNorth.LEADNo66EE.CDAParserD</DataLocation>
+<DataLocation>^LEADNorth.CDAPro7F65.CDAParserD</DataLocation>
 <DefaultData>CDAParserDefaultData</DefaultData>
-<IdLocation>^LEADNorth.LEADNo66EE.CDAParserD</IdLocation>
-<IndexLocation>^LEADNorth.LEADNo66EE.CDAParserI</IndexLocation>
-<StreamLocation>^LEADNorth.LEADNo66EE.CDAParserS</StreamLocation>
+<IdLocation>^LEADNorth.CDAPro7F65.CDAParserD</IdLocation>
+<IndexLocation>^LEADNorth.CDAPro7F65.CDAParserI</IndexLocation>
+<StreamLocation>^LEADNorth.CDAPro7F65.CDAParserS</StreamLocation>
 <Type>%Storage.Persistent</Type>
 }
 
