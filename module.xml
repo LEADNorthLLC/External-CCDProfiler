@@ -16,12 +16,12 @@
       <Resource
 	  Name="Angular/dist/ln-dpt/browser"
 	  ProcessorClass="%IPM.ResourceProcessor.FileCopy"
-	  InstallDirectory="${cspdir}/User/LeadNorth"
+	  InstallDirectory="${cspdir}/{$namespace}/LeadNorth"
 	  />
       <!-- API WebApp (REST handler) -->
       <WebApplication 
         Url="/csp/LeadNorth/api"
-        NameSpace="USER"
+        NameSpace="{$namespace}"
         CookiePath="/csp/LeadNorth/api/" 
         DefaultTimeout="900" 
         Description="Web application for the API"
@@ -36,9 +36,9 @@
       />
 	  <WebApplication
 		Url="/csp/LeadNorth"
-		NameSpace="USER"
+		NameSpace="{$namespace}"
 		DeployPath="Angular/dist/ln-dpt"
-		SourcePath="${cspdir}User\LeadNorth"
+		SourcePath="${cspdir}{$namespace}\LeadNorth"
 		CookiePath="/csp/LeadNorth/"
 		DefaultTimeout="900"
 		Description="LeadNorth's CCD profiler"
