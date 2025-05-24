@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="IRIS" version="26" zv="IRIS for Windows (x86-64) 2022.1.2 (Build 574_0_22407U)" ts="2025-05-13 17:03:41">
-<Project name="DP" LastModified="2025-05-13 17:01:45.7676717">
-  <Items>
-    <ProjectItem name="LEADNorth" type="PKG"></ProjectItem>
-  </Items>
-</Project>
-
-
+<Export generator="IRIS" version="26" zv="IRIS for Windows (x86-64) 2022.1.2 (Build 574_0_22407U)" ts="2025-05-24 14:41:08">
 <Class name="LEADNorth.CDAProfiler.CCDProcessor">
 <TimeChanged>67338,60305.8003174</TimeChanged>
 <TimeCreated>67080,58088.1780856</TimeCreated>
@@ -3223,7 +3216,7 @@ do ##class(LEADNorth.CDAProfiler.Sections.CCDDocument).GetUniqueSections("YK")</
 
 <Class name="LEADNorth.CDAProfiler.Sections.CCDImplants">
 <Super>%Persistent</Super>
-<TimeChanged>67326,53370.1637552</TimeChanged>
+<TimeChanged>67349,34620.1665148</TimeChanged>
 <TimeCreated>67178,59647.7539688</TimeCreated>
 
 <Property name="ImplantID">
@@ -3303,6 +3296,7 @@ do ##class(LEADNorth.CDAProfiler.Sections.CCDDocument).GetUniqueSections("YK")</
 <IdLocation>^LEADNorth.CDAPF8FE.CCDImplantsD</IdLocation>
 <IndexLocation>^LEADNorth.CDAPF8FE.CCDImplantsI</IndexLocation>
 <StreamLocation>^LEADNorth.CDAPF8FE.CCDImplantsS</StreamLocation>
+<ExtentSize>8</ExtentSize>
 <Data name="CCDImplantsDefaultData">
 <Structure>listnode</Structure>
 <Subscript/>
@@ -3352,6 +3346,73 @@ do ##class(LEADNorth.CDAProfiler.Sections.CCDDocument).GetUniqueSections("YK")</
 <Value>XPath</Value>
 </Value>
 </Data>
+<Property name="%%CLASSNAME">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="%%ID">
+<Selectivity>1</Selectivity>
+<AverageFieldSize>3</AverageFieldSize>
+</Property>
+<Property name="AuthorTime">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>21</AverageFieldSize>
+</Property>
+<Property name="DeviceCode">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="DeviceCodeSystem">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="DeviceCodeSystemName">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="DeviceName">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="DocumentID">
+<Selectivity>25.0000%</Selectivity>
+<AverageFieldSize>5</AverageFieldSize>
+</Property>
+<Property name="ImplantDate">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>10</AverageFieldSize>
+</Property>
+<Property name="ImplantID">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="ImplantStatus">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>11</AverageFieldSize>
+</Property>
+<Property name="ManufacturerModelName">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="ProfileID">
+<Selectivity>25.0000%</Selectivity>
+<AverageFieldSize>5.5</AverageFieldSize>
+</Property>
+<Property name="RemovalDate">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="SerialNumber">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<Property name="XPath">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>2</AverageFieldSize>
+</Property>
+<SQLMap name="IDKEY">
+<BlockCount>-4</BlockCount>
+</SQLMap>
 </Storage>
 </Class>
 
@@ -6373,6 +6434,410 @@ do ##class(LEADNorth.CDAProfiler.Sections.CCDDocument).GetUniqueSections("YK")</
 <SQLMap name="IDKEY">
 <BlockCount>-16</BlockCount>
 </SQLMap>
+</Storage>
+</Class>
+
+
+<Class name="LEADNorth.CDAProfiler.Utils.ChangeClass">
+<Super>%Persistent</Super>
+<TimeChanged>67338,61346.9153897</TimeChanged>
+<TimeCreated>67151,62534.0460004</TimeCreated>
+
+<Method name="UpdateGetXPathMethod">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String,propertyName:%String,xPath:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    Set classDef = ##class(%Dictionary.ClassDefinition).%OpenId(className)
+    If 'classDef {
+        Write "Class not found: ", className, !
+        Quit $$$ERROR($$$GeneralError, "Class not found.")
+    }
+
+    Set methodName = "GetXPath"
+    Set methodId = className_"||"_methodName
+    Set methodDef = ##class(%Dictionary.MethodDefinition).%OpenId(methodId)
+    If 'methodDef {
+        Set methodDef = ##class(%Dictionary.MethodDefinition).%New()
+        Set methodDef.Name = methodName
+        Set methodDef.Parent = classDef
+        Set methodDef.ReturnType = "%String"
+        Set methodDef.Qualifiers = "ClassMethod"
+        Set methodDef.Language = "objectscript"
+        Set methodDef.Implementation = "{ }" 
+        Do classDef.Methods.Insert(methodDef)
+    }
+
+    Set codeStream = methodDef.Implementation
+    Set code = ""
+    While 'codeStream.AtEnd {
+        Set code = code _ codeStream.ReadLine() _ $Char(13,10)
+    }
+
+    Set codeLines = ""
+    Set lineNo = 1
+    Set pos = 1
+    While pos'="" {
+        Set nextPos = $Find(code, $Char(13,10), pos)
+        If nextPos=0 {
+            Set codeLines(lineNo) = $Extract(code, pos, *)
+            Set pos = ""
+        } Else {
+            Set codeLines(lineNo) = $Extract(code, pos, nextPos - $Length($Char(13,10)) -1)
+            Set pos = nextPos
+        }
+        Set lineNo = lineNo + 1
+    }
+
+    Set insertLine = 0
+    For i=1:1:lineNo-1 {
+        Set lineStripped = $ZStrip(codeLines(i),"<>W")
+        write lineStripped, !
+        If lineStripped="} Else {" {
+            Set insertLine = i -1
+            Quit
+        }
+    }
+
+    If insertLine=0 {
+        Write "Could not find the position to insert XPath code.", !
+        Quit $$$ERROR($$$GeneralError, "Could not find the position to insert XPath code.")
+    }
+
+    Set newElseIf = "    } ElseIf field = """_propertyName_""" {"
+    Set newElseIf = newElseIf_$Char(13,10)_"        Return """_xPath_""""
+    //Set newElseIf = newElseIf_$Char(13,10)_"    }"
+
+    Set newCode = ""
+    For i=1:1:insertLine {
+        Set newCode = newCode _ codeLines(i) _ $Char(13,10)
+    }
+    Set newCode = newCode _ newElseIf _ $Char(13,10)
+    For i=insertLine+1:1:lineNo-1 {
+        Set newCode = newCode _ codeLines(i) _ $Char(13,10)
+    }
+
+    Set newCodeStream = ##class(%Stream.TmpCharacter).%New()
+    Do newCodeStream.Write(newCode)
+    Set methodDef.Implementation = newCodeStream
+
+    Set sc = methodDef.%Save()
+    If $$$ISERR(sc) {
+        Do $System.Status.DisplayError(sc)
+        Quit sc
+    }
+
+    Set sc = classDef.%Save()
+    If $$$ISERR(sc) {
+        Do $System.Status.DisplayError(sc)
+        Quit sc
+    }
+    Set sc = $System.OBJ.Compile(className,"cuk")
+    If $$$ISERR(sc) {
+        Do $System.Status.DisplayError(sc)
+        Quit sc
+    }
+
+    Write "Successfully updated GetXPath method in class ", className, " with property ", propertyName, ".", !
+    Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="AddPropertyToClass">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String,propertyName:%String,propertyType:%String="%String",maxLength:%Integer=255</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set sc = $$$OK
+
+    set classDef = ##class(%Dictionary.ClassDefinition).%OpenId(className)
+    if 'classDef {
+        write "Class not found: ", className, !
+        quit $$$ERROR($$$GeneralError, "Class not found.")
+    }
+
+    if classDef.Properties.GetAt(propertyName)'="" {
+        write "Property ", propertyName, " already exists in class ", className, ".", !
+        quit $$$OK
+    }
+
+    set propDef = ##class(%Dictionary.PropertyDefinition).%New()
+    set propDef.Name = propertyName
+    set propDef.Type = propertyType
+
+    if propertyType="%String" && maxLength>0 {
+        do propDef.Parameters.SetAt(maxLength, "MAXLEN")
+    }
+
+    set sc = classDef.Properties.Insert(propDef)
+    if $$$ISERR(sc) {
+        do $System.Status.DisplayError(sc)
+        quit sc
+    }
+
+    set sc = classDef.%Save()
+    if $$$ISERR(sc) {
+        do $System.Status.DisplayError(sc)
+        quit sc
+    }
+
+    set sc = $System.OBJ.Compile(className, "cuk")
+    if $$$ISERR(sc) {
+        do $System.Status.DisplayError(sc)
+        quit sc
+    }
+
+    write "Successfully added property ", propertyName, " to class ", className, ".", !
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="AddPropertyToInsertMethod">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String,methodName:%String,propertyName:%String,sectionClassName:%String,xPath:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    Set varName = $ZConvert($Extract(propertyName,1),"L")_$Extract(propertyName,2,*)
+    
+    Set classDef = ##class(%Dictionary.ClassDefinition).%OpenId(className)
+    If 'classDef {
+        Write "Class not found: ", className, !
+        Quit $$$ERROR($$$GeneralError, "Class not found.")
+    }
+    
+    Set methodId = className_"||"_methodName
+    Set methodDef = ##class(%Dictionary.MethodDefinition).%OpenId(methodId)
+    If 'methodDef {
+        Write "Method not found: ", methodName, !
+        Quit $$$ERROR($$$GeneralError, "Method not found.")
+    }
+    
+    Set codeStream = methodDef.Implementation
+    If codeStream.Size = 0 {
+        Write "Method implementation is empty.", !
+        Quit $$$ERROR($$$GeneralError, "Method implementation is empty.")
+    }
+    Set code = ""
+    While 'codeStream.AtEnd {
+        Set code = code _ codeStream.ReadLine() _ $Char(13,10)
+    }
+
+    Set varDeclaration = "    Set " _ varName _ " = """""
+    Set code = ..InsertVariableDeclaration(code, varDeclaration)
+    
+    Set parsingCode = ""
+    Set parsingCode = parsingCode _ "                ElseIf textreader.LocalName = """ _ propertyName _ """ {" _ $Char(13,10)
+    Set parsingCode = parsingCode _ "                    Set status = textreader.Read()  // Move to the text node" _ $Char(13,10)
+    Set parsingCode = parsingCode _ "                    If textreader.NodeType = ""chars"" {" _ $Char(13,10)
+    Set parsingCode = parsingCode _ "                        Set " _ varName _ " = textreader.Value" _ $Char(13,10)
+    Set parsingCode = parsingCode _ "                    }" _ $Char(13,10)
+    Set parsingCode = parsingCode _ "                }"
+    Set code = ..InsertParsingCode(code, parsingCode)
+    
+    Set assignmentCode = "        Set patient." _ propertyName _ " = " _ varName
+    Set code = ..InsertPropertyAssignment(code, assignmentCode)
+    
+    Set codeStream = ##class(%Stream.TmpCharacter).%New()
+    Do codeStream.Write(code)
+    Set methodDef.Implementation = codeStream
+    Set sc = methodDef.%Save()
+    If $$$ISERR(sc) {
+        Do $System.Status.DisplayError(sc)
+        Quit sc
+    }
+    
+    Set sc = classDef.%Save()
+    If $$$ISERR(sc) {
+        Do $System.Status.DisplayError(sc)
+        Quit sc
+    }
+    
+    Set sc = $System.OBJ.Compile(className,"cuk")
+    If $$$ISERR(sc) {
+        Do $System.Status.DisplayError(sc)
+        Quit sc
+    }
+    
+    Write "Successfully updated method ", methodName, " in class ", className, " to include property ", propertyName, ".", !
+    
+    Set sc = ..AddPropertyToClass(sectionClassName, propertyName)
+    If $$$ISERR(sc) {
+        Quit sc
+    }
+
+    /*Set sc = ..UpdateGetXPathMethod(sectionClassName, propertyName, xPath)
+    If $$$ISERR(sc) {
+        Quit sc
+    }
+*/
+    Write "Successfully added property ", propertyName, " to class ", sectionClassName, " and updated GetXPath method.", !
+    Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="InsertVariableDeclaration">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>code:%String,varDeclaration:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    Set codeLines = ""
+    Set lineNo = 1
+    Set pos = 1
+    While pos'="" {
+        Set nextPos = $Find(code, $Char(13,10), pos)
+        If nextPos=0 {
+            Set codeLines(lineNo) = $Extract(code, pos, *)
+            Set pos = ""
+        } Else {
+            Set codeLines(lineNo) = $Extract(code, pos, nextPos - $Length($Char(13,10)) -1)
+            Set pos = nextPos
+        }
+        Set lineNo = lineNo + 1
+    }
+
+    Set insertLine = 0
+    For i=1:1:lineNo-1 {
+        Set lineStripped = $ZStrip(codeLines(i),"<>W")
+        Set lineUpper = $ZConvert(lineStripped,"U")
+        If $Extract(lineUpper,1,4)="SET " && (lineUpper["= """"") {
+            Set insertLine = i
+            // Write "Found variable declaration at line ", i, ": ", codeLines(i), !
+        }
+    }
+
+    If insertLine=0 {
+        Write "Could not find variable declarations.", !
+        Quit code
+    }
+
+    Set newLineNo = lineNo
+    For j=lineNo-1:-1:insertLine+1 {
+        Set codeLines(j+1) = codeLines(j)
+    }
+    Set codeLines(insertLine+1) = varDeclaration
+
+    Set newCode = ""
+    For i=1:1:newLineNo {
+        If '$Data(codeLines(i)) Quit
+        Set newCode = newCode _ codeLines(i) _ $Char(13,10)
+    }
+    Quit newCode
+]]></Implementation>
+</Method>
+
+<Method name="InsertParsingCode">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>code:%String,parsingCode:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+
+    Set codeLines = ""
+    Set lineNo = 1
+    Set pos = 1
+    While pos'="" {
+        Set nextPos = $Find(code, $Char(13,10), pos)
+        If nextPos=0 {
+            Set codeLines(lineNo) = $Extract(code, pos, *)
+            Set pos = ""
+        } Else {
+            Set codeLines(lineNo) = $Extract(code, pos, nextPos - $Length($Char(13,10)) - 1)
+            Set pos = nextPos
+        }
+        Set lineNo = lineNo + 1
+    }
+
+    Set insertLine = 0
+    Set blockLevel = 0
+    For i=1:1:lineNo-1 {
+        Set line = codeLines(i)
+        Set blockLevel = blockLevel + ($Length(line,"{") - $Length($Translate(line,"{","")))
+        Set blockLevel = blockLevel - ($Length(line,"}") - $Length($Translate(line,"}","")))
+        If blockLevel=2, $ZStrip(line,"<>W")="}" {
+            Set insertLine = i - 1  
+            Quit
+        }
+    }
+
+    If insertLine=0 {
+        Write "Could not find the position to insert parsing code.", !
+        Quit code
+    }
+
+    Set newLineNo = lineNo
+    For j=lineNo-1:-1:insertLine+1 {
+        Set codeLines(j+1) = codeLines(j)
+    }
+    Set codeLines(insertLine+1) = parsingCode
+
+    Set newCode = ""
+    For i=1:1:newLineNo {
+        If '$Data(codeLines(i)) Quit
+        Set newCode = newCode _ codeLines(i) _ $Char(13,10)
+    }
+    Quit newCode
+]]></Implementation>
+</Method>
+
+<Method name="InsertPropertyAssignment">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>code:%String,assignmentCode:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+
+    Set codeLines = ""
+    Set lineNo = 1
+    Set pos = 1
+    While pos'="" {
+        Set nextPos = $Find(code, $Char(13,10), pos)
+        If nextPos=0 {
+            Set codeLines(lineNo) = $Extract(code, pos, *)
+            Set pos = ""
+        } Else {
+            Set codeLines(lineNo) = $Extract(code, pos, nextPos - $Length($Char(13,10)) - 1)
+            Set pos = nextPos
+        }
+        Set lineNo = lineNo + 1
+    }
+
+    Set insertLine = 0
+    For i=1:1:lineNo-1 {
+        If codeLines(i)["Set saveStatus = patient.%Save()" {
+            Set insertLine = i - 1
+            Quit
+        }
+    }
+    If insertLine=0 {
+        Write "Could not find patient save operation.", !
+        Quit code
+    }
+
+    Set newLineNo = lineNo
+    For j=lineNo-1:-1:insertLine+1 {
+        Set codeLines(j+1) = codeLines(j)
+    }
+    Set codeLines(insertLine+1) = assignmentCode
+
+    Set newCode = ""
+    For i=1:1:newLineNo {
+        If '$Data(codeLines(i)) Quit
+        Set newCode = newCode _ codeLines(i) _ $Char(13,10)
+    }
+    Quit newCode
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DataLocation>^LEADNorth.CDAPB0DB.ChangeClassD</DataLocation>
+<DefaultData>ChangeClassDefaultData</DefaultData>
+<IdLocation>^LEADNorth.CDAPB0DB.ChangeClassD</IdLocation>
+<IndexLocation>^LEADNorth.CDAPB0DB.ChangeClassI</IndexLocation>
+<StreamLocation>^LEADNorth.CDAPB0DB.ChangeClassS</StreamLocation>
+<Data name="ChangeClassDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+</Data>
 </Storage>
 </Class>
 
@@ -10043,7 +10508,19 @@ about which sections are present in a given document.
 ]]></Implementation>
 </Method>
 
-
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DataLocation>^LEADNorth.CDAProfB0DB.DBInsertD</DataLocation>
+<DefaultData>DBInsertDefaultData</DefaultData>
+<IdLocation>^LEADNorth.CDAProfB0DB.DBInsertD</IdLocation>
+<IndexLocation>^LEADNorth.CDAProfB0DB.DBInsertI</IndexLocation>
+<StreamLocation>^LEADNorth.CDAProfB0DB.DBInsertS</StreamLocation>
+<Data name="DBInsertDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 
 
@@ -10126,7 +10603,19 @@ The current best attempt at being able to dynamically grab the Xpath from which 
 ]]></Implementation>
 </Method>
 
-
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DataLocation>^LEADNorth.CDAProfB0DB.MappingsD</DataLocation>
+<DefaultData>MappingsDefaultData</DefaultData>
+<IdLocation>^LEADNorth.CDAProfB0DB.MappingsD</IdLocation>
+<IndexLocation>^LEADNorth.CDAProfB0DB.MappingsI</IndexLocation>
+<StreamLocation>^LEADNorth.CDAProfB0DB.MappingsS</StreamLocation>
+<Data name="MappingsDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 
 
@@ -10134,7 +10623,7 @@ The current best attempt at being able to dynamically grab the Xpath from which 
 <Description>
 This class contains compiled XSLT templates for transforming HL7 CDA documents into structured XML segments</Description>
 <Super>%Persistent</Super>
-<TimeChanged>67338,60383.2544799</TimeChanged>
+<TimeChanged>67339,51926.3342563</TimeChanged>
 <TimeCreated>67081,41354.7375245</TimeCreated>
 
 <XData name="MetadataXSLT">
@@ -11164,7 +11653,7 @@ This class contains compiled XSLT templates for transforming HL7 CDA documents i
     <xsl:output method="xml" indent="yes"/>
     <xsl:template match="/hl7:ClinicalDocument">
         <Goals>
-            <xsl:for-each select="hl7:component/hl7:structuredBody/hl7:component/hl7:section[hl7:code/@code='61146-7']/hl7:entry/hl7:act">
+            <xsl:for-each select="hl7:component/hl7:structuredBody/hl7:component/hl7:section[hl7:code/@code='61146-7']/hl7:entry/hl7:observation">
                 <Goal>
                     <GoalID>
                         <xsl:value-of select="hl7:id/@extension"/>
@@ -11498,7 +11987,19 @@ This class contains compiled XSLT templates for transforming HL7 CDA documents i
 ]]></Data>
 </XData>
 
-
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DataLocation>^LEADNorth.CDAPro7F65.CDAParserD</DataLocation>
+<DefaultData>CDAParserDefaultData</DefaultData>
+<IdLocation>^LEADNorth.CDAPro7F65.CDAParserD</IdLocation>
+<IndexLocation>^LEADNorth.CDAPro7F65.CDAParserI</IndexLocation>
+<StreamLocation>^LEADNorth.CDAPro7F65.CDAParserS</StreamLocation>
+<Data name="CDAParserDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 
 
@@ -11529,8 +12030,6 @@ This Style block contains application-wide CSS style definitions.</Description>
 ]]></Data>
 </XData>
 </Class>
-
-
 
 
 <Class name="LEADNorth.REST.Handler">
@@ -14936,4 +15435,6 @@ ClassMethod ChatGPTAPI(question As %String, xSLT As %String) As %String [ ZenMet
 ]]></Content>
 </UDLText>
 </Class>
+
+
 </Export>
