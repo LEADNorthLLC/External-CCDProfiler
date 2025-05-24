@@ -1,24 +1,55 @@
 Class LEADNorth.CDAProfiler.Utils.DBInsert Extends %Persistent
 {
 
+/// Ensures the specified section name is recorded in the SectionsPresent list for the given document.
+/// - If the section already exists, does nothing.
+/// - If the document is not found, returns an error.
+/// - If the section is new, it is appended and the document is saved.
 ClassMethod SectionStats(documentID As %Integer, sectionName As %String) As %Status
 {
-  Set doc = ##class(LEADNorth.CDAProfiler.Sections.CCDDocument).%OpenId(documentID)
-  Quit:'$IsObject(doc) $$$ERROR($$$GeneralError, "Document not found")
-
-  Set cur = "," _ doc.SectionsPresent _ ","
-  If cur'[(","_sectionName_",") {
-    If doc.SectionsPresent'="" {
-      Set doc.SectionsPresent = doc.SectionsPresent _ "," _ sectionName
-    } Else  {
-      Set doc.SectionsPresent = sectionName
+    // Attempt to open the document by ID
+    Set doc = ##class(LEADNorth.CDAProfiler.Sections.CCDDocument).%OpenId(documentID)
+    If '$IsObject(doc) {
+        Quit $$$ERROR($$$GeneralError, "Document not found")
     }
-    Set sc = doc.%Save()
-    Quit:$$$ISERR(sc) sc
-  }
-  Quit $$$OK
+
+    // Normalize the current sections string to avoid substring false positives
+    Set cur = "," _ doc.SectionsPresent _ ","
+
+    // If section is not already recorded, append it
+    If cur'[("," _ sectionName _ ",") {
+        If doc.SectionsPresent'="" {
+            Set doc.SectionsPresent = doc.SectionsPresent _ "," _ sectionName
+        } Else {
+            Set doc.SectionsPresent = sectionName
+        }
+
+        // Save the updated document
+        Set sc = doc.%Save()
+        If $$$ISERR(sc) Quit sc
+    }
+
+    Quit $$$OK
 }
 
+/// This class provides utility methods for inserting CCD section data into the database.
+/// 
+/// Each `Insert[Section]Data(...)` method follows the same general pattern:
+/// 1. Reads an XML stream into memory as a string.
+/// 2. Uses `%XML.TextReader` to parse the XML string token by token.
+/// 3. For each complete XML element representing a data entry (e.g., `<Allergy>`, `<Medication>`, etc.),
+///    the method:
+///    - Extracts relevant child node values.
+///    - Creates a new persistent object representing the section (e.g., `CCDAllergy`, `CCDMedication`, etc.).
+///    - Sets all parsed properties into the object.
+///    - Saves the object to the database.
+///    - Calls `SectionStats(documentID, sectionName)` to register the section in the CCDDocument's `SectionsPresent` field.
+/// 4. If a required parent document (`CCDDocument`) is not found, logs the issue and skips the entry.
+/// 5. If saving fails, logs and continues without terminating the loop.
+/// 
+/// These methods support structured CCD profiling workflows by parsing each section separately and maintaining metadata
+/// about which sections are present in a given document.
+/// 
 ClassMethod InsertDocumentMetadata(docXml As %Stream.GlobalCharacter, Output documentID As %Integer, profileID As %String) As %Status
 {
     Set docString = docXml.Read()
@@ -34,32 +65,39 @@ ClassMethod InsertDocumentMetadata(docXml As %Stream.GlobalCharacter, Output doc
     Set patientID = ""
     Set documentDate = ""
     Set allSections = ""
+    Set sectionsWithEncounterNumbers = ""
 
     While textreader.Read()
     {
         If textreader.NodeType = "element" {
             If textreader.LocalName = "PatientID" {
-                Set status = textreader.Read()  // Move to the text node
+                Set status = textreader.Read()
                 If textreader.NodeType = "chars" {
                     Set patientID = textreader.Value
                 }
             }
             ElseIf textreader.LocalName = "DocumentDate" {
-                Set status = textreader.Read()  // Move to the text node
+                Set status = textreader.Read()
                 If textreader.NodeType = "chars" {
                     Set documentDate = textreader.Value
                 }
             }
             ElseIf textreader.LocalName = "DocumentDate" {
-                Set status = textreader.Read()  // Move to the text node
+                Set status = textreader.Read()
                 If textreader.NodeType = "chars" {
                     Set documentDate = textreader.Value
                 }
             }
             ElseIf textreader.LocalName = "AllSections" {
-                Set status = textreader.Read()  // Move to the text node
+                Set status = textreader.Read()
                 If textreader.NodeType = "chars" {
                     Set allSections = textreader.Value
+                }
+            }
+            ElseIf textreader.LocalName = "SectionsWithEncounterNumbers" {
+                Set status = textreader.Read()
+                If textreader.NodeType = "chars" {
+                    Set sectionsWithEncounterNumbers = textreader.Value
                 }
             }
         }
@@ -74,6 +112,7 @@ ClassMethod InsertDocumentMetadata(docXml As %Stream.GlobalCharacter, Output doc
         Set document.PatientID = +patientID
         Set document.DocumentDate = $zdateh($e(documentDate,1,8),8)  // Convert to an internal date format
         Set document.AllSections = allSections
+        Set document.SectionsWithEncounterNumbers = sectionsWithEncounterNumbers
 
         //Write "docdate: ", document.DocumentDate, !
         //Write "patid: ", document.PatientID, !
@@ -86,7 +125,7 @@ ClassMethod InsertDocumentMetadata(docXml As %Stream.GlobalCharacter, Output doc
         }
 
         //Write "DocumentID: ", document.DocumentID, !
-        Set documentID = document.DocumentID  // Set the output parameter to the generated DocumentID
+        Set documentID = document.DocumentID
     } Else {
         Write "PatientID or DocumentDate is missing from the XML.", !
         Quit $$$ERROR($$$GeneralError, "PatientID or DocumentDate missing.")
@@ -3544,11 +3583,11 @@ Storage Default
 <Value>%%CLASSNAME</Value>
 </Value>
 </Data>
-<DataLocation>^LEADNorth.LEADNorD782.DBInsertD</DataLocation>
+<DataLocation>^LEADNorth.CDAProfB0DB.DBInsertD</DataLocation>
 <DefaultData>DBInsertDefaultData</DefaultData>
-<IdLocation>^LEADNorth.LEADNorD782.DBInsertD</IdLocation>
-<IndexLocation>^LEADNorth.LEADNorD782.DBInsertI</IndexLocation>
-<StreamLocation>^LEADNorth.LEADNorD782.DBInsertS</StreamLocation>
+<IdLocation>^LEADNorth.CDAProfB0DB.DBInsertD</IdLocation>
+<IndexLocation>^LEADNorth.CDAProfB0DB.DBInsertI</IndexLocation>
+<StreamLocation>^LEADNorth.CDAProfB0DB.DBInsertS</StreamLocation>
 <Type>%Storage.Persistent</Type>
 }
 

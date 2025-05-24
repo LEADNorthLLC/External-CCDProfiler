@@ -1,81 +1,80 @@
 Class LEADNorth.CDAProfiler.CCDProcessor
 {
 
+/// Processes all .xml CCD files in a directory by invoking the CCD processor.
+/// Returns an error if the directory is invalid or no XML files are found.
 ClassMethod ProcessCCDDirectory(directory As %String, profileID As %String, sections As %String) As %Status
 {
-
-    If ##class(%File).DirectoryExists(directory) = 0 {
+    // Check if the provided directory exists
+    If ##class(%File).DirectoryExists(directory)'=1 {
         Write "ERROR: Directory does not exist: ", directory, !
         Quit $$$ERROR($$$GeneralError, "Directory does not exist: "_directory)
     }
 
-    //Write "Directory exists: ", directory, !
-
+    // Get initial file list to count XML files
     Set resultSet = ##class(%ResultSet).%New("%File:FileSet")
     Set sc = resultSet.Execute(directory, "*.xml")
-    
     If $$$ISERR(sc) {
         Write "ERROR: Failed to retrieve file list from directory: ", directory, !
         Quit sc
     }
 
+    // Count files to validate presence
     Set fileCount = 0
     While resultSet.%Next() {
         Set fileCount = fileCount + 1
     }
 
     If fileCount = 0 {
-        Write "No XML files found in directory: ", directory, !
+        Write "INFO: No XML files found in directory: ", directory, !
         Quit $$$OK
     }
 
+    // Reopen the file list for actual processing
     Set resultSet = ##class(%ResultSet).%New("%File:FileSet")
     Set sc = resultSet.Execute(directory, "*.xml")
-    
+    If $$$ISERR(sc) {
+        Write "ERROR: Failed to reopen file list: ", directory, !
+        Quit sc
+    }
+
     Set currentIndex = 0
 
     While resultSet.%Next() {
-	    Set currentIndex = currentIndex + 1
-
+        Set currentIndex = currentIndex + 1
         Set fileName = resultSet.Data("Name")
-
-        //Write "Processing file: ", directory, "\", fileName, !
-
         Set fullPath = ##class(%File).NormalizeFilename(fileName, directory)
-        //Write "Full path for file: ", fullPath, !
 
-        If ##class(%File).Exists(fullPath) = 0 {
-            Write "ERROR: File does not exist: ", fullPath, !
-            Continue  // Skip to the next file
+        // Check if file still exists
+        If ##class(%File).Exists(fullPath)'=1 {
+            Write "WARNING: File not found (skipped): ", fullPath, !
+            Continue
         }
 
+        // Attempt to process the file
         Try {
-	        //w sections
             Set sc = ..ProcessCCD(fullPath, profileID, sections)
-
             If $$$ISOK(sc) {
-                Write "PROGRESS:", currentIndex, "/", fileCount, !
+                Write "PROGRESS: Processed ", currentIndex, " of ", fileCount, ": ", fileName, !
             } Else {
                 Write "ERROR: Failed to process file: ", fullPath, !
                 Do $System.Status.DisplayError(sc)
             }
         } Catch ex {
-            Write "ERROR: Exception occurred while processing file: ", fullPath, !
+            Write "EXCEPTION: Error while processing file: ", fullPath, !
             Do $System.Status.DisplayError(ex.AsStatus())
         }
     }
 
-    //Write "All files processed successfully.", !
-
+    Write "INFO: All eligible files in directory processed.", !
     Quit $$$OK
 }
 
 ClassMethod ProcessCCD(ccdFilePath As %String, profileID As %String, sections As %String) As %Status
 {
-	//write "hi"
     Set status = $$$OK
 
-    // Always process Metadata first (regardless of sections)
+    // Process Metadata first
     Set docXml = ..FileToStream(ccdFilePath, "MetadataXSLT")
     If docXml = "" {
         Write "XSLT transformation failed. No XML output generated.", !
@@ -89,7 +88,7 @@ ClassMethod ProcessCCD(ccdFilePath As %String, profileID As %String, sections As
         Quit docStatus
     }
 
-    // Now selectively process based on 'sections'
+    // Selectively process based on 'sections'
     If sections["allergy" {
 	    //write "HELLO"
         Set allergyXml = ..FileToStream(ccdFilePath, "AllergyXSLT")
@@ -227,56 +226,66 @@ ClassMethod ProcessCCD(ccdFilePath As %String, profileID As %String, sections As
     Quit status
 }
 
+/// Converts the contents of a file to a character stream and applies an XSLT transformation.
+/// Returns the transformed output stream or an error stream if the operation fails.
 ClassMethod FileToStream(filePath As %String, xDataName As %String) As %Stream.GlobalCharacter
 {
-	//w "FilePath: "_filePath,!
-    Set stream = ##class(%Stream.GlobalCharacter).%New()
+    // Create a new in-memory character stream
+    Set inputStream = ##class(%Stream.GlobalCharacter).%New()
 
+    // Open the file
     Set file = ##class(%Stream.FileCharacter).%New()
     Set sc = file.LinkToFile(filePath)
-    
     If $$$ISERR(sc) {
-        Write "Error opening file(s): ", filePath, !
         Do $System.Status.DisplayError(sc)
-        Quit $$$ERROR()
+        Quit inputStream  // Return an empty stream to maintain type safety
     }
 
+    // Read file contents into the memory stream
     While 'file.AtEnd {
         Set line = file.ReadLine()
-        Do stream.Write(line)
-        Do stream.Write($char(13, 10)) 
+        Do inputStream.Write(line)
+        Do inputStream.Write($Char(13,10))
     }
 
-    Do stream.Rewind()
+    Do inputStream.Rewind()
 
-    set tC = ..ApplyXSLT(stream, xDataName)
-    Return tC
+    // Apply the XSLT transformation
+    Set resultStream = ..ApplyXSLT(inputStream, xDataName)
+    Quit resultStream
 }
 
+/// Applies an XSLT transformation to the input stream using the specified XData block.
+/// Returns the transformed output as a new character stream.
 ClassMethod ApplyXSLT(pStream As %Stream, xDataName As %String) As %Stream.GlobalCharacter
 {
     #dim tSC As %Status = $$$OK
     #dim tCompiledStyleSheet As %XML.XSLT.CompiledStyleSheet
-    #dim tOutput = ##class(%Stream.GlobalCharacter).%New()
-    
-    do {
-        Set tXSL=##class(%Dictionary.CompiledXData).%OpenId("LEADNorth.CDAProfiler.XSLT.CDAParser||"_xDataName).Data
-        If '$IsObject(tXSL) Set tSC=%objlasterror Quit
-        
-        Set tSC=##class(%XML.XSLT.CompiledStyleSheet).CreateFromStream(tXSL,.tCompiledStyleSheet)
+    #dim outputStream = ##class(%Stream.GlobalCharacter).%New()
+
+    Do {
+        // Open the compiled XData block
+        Set tXSL = ##class(%Dictionary.CompiledXData).%OpenId("LEADNorth.CDAProfiler.XSLT.CDAParser||"_xDataName).Data
+        If '$IsObject(tXSL) {
+            Set tSC = %objlasterror
+            Quit
+        }
+
+        // Compile the XSLT stylesheet
+        Set tSC = ##class(%XML.XSLT.CompiledStyleSheet).CreateFromStream(tXSL, .tCompiledStyleSheet)
         If $$$ISERR(tSC) Quit
-        
-        
-        Set tSC=##class(%XML.XSLT.Transformer).TransformStreamWithCompiledXSL(pStream,tCompiledStyleSheet,.tOutput)
+
+        // Apply transformation
+        Set tSC = ##class(%XML.XSLT.Transformer).TransformStreamWithCompiledXSL(pStream, tCompiledStyleSheet, .outputStream)
         If $$$ISERR(tSC) Quit
-    } while (0)
-    
+    } While (0)
+
     If $$$ISERR(tSC) {
         Do DisplayError^%apiOBJ(tSC)
-        Quit ""
+        Quit ##class(%Stream.GlobalCharacter).%New()  // Return empty stream on error
     }
-    
-    Quit tOutput
+
+    Quit outputStream
 }
 
 ClassMethod ProcessLatestCCDs(num As %Integer, profileID As %String, filterDocuments As %String, sections As %String) As %Status
@@ -301,7 +310,6 @@ ClassMethod ProcessLatestCCDs(num As %Integer, profileID As %String, filterDocum
     Set stmt = ##class(%SQL.Statement).%New()
     Set qStatus = stmt.%Prepare(sqltext)
     If $$$ISERR(qStatus) {
-        // Handle error
         Do $System.Status.DisplayError(qStatus)
         Quit qStatus
     }
@@ -321,8 +329,6 @@ ClassMethod ProcessLatestCCDs(num As %Integer, profileID As %String, filterDocum
         If $$$ISERR(sc) {
             Write "ERROR: Failed to process document ID: ", docID, !
             Do $System.Status.DisplayError(sc)
-        } Else {
-            //Write "Successfully processed document ID: ", docID, !
         }
     }
     Quit tSC
@@ -332,7 +338,7 @@ ClassMethod ProcessCCDStream(ccdStream As %Stream.GlobalCharacter, profileID As 
 {
     Set status = $$$OK
 
-    // Always process Metadata first
+    // Process Metadata first
     Set docXml = ..ApplyXSLT(ccdStream, "MetadataXSLT")
     If docXml = "" {
         Write "XSLT transformation failed for Document Metadata. No XML output generated.", !
@@ -346,7 +352,7 @@ ClassMethod ProcessCCDStream(ccdStream As %Stream.GlobalCharacter, profileID As 
         Quit docStatus
     }
 
-    // Now selectively process sections
+    // Selectively process sections
     If sections["allergy" {
         Set allergyXml = ..ApplyXSLT(ccdStream, "AllergyXSLT")
         If allergyXml = "" Quit $$$ERROR($$$GeneralError, "XSLT transformation failed for allergies.")
