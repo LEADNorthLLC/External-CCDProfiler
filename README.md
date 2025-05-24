@@ -33,6 +33,12 @@
 
 
 # Getting Started
-1. Within the repository, there is a sample CCD(PHI safe)
-2. Goto this page http://[server]:[port]/csp/LeadNorth/index.html#/index and enter the directory where the sample file exists and provide a profile name. Click Start Import...
-3. Once the import is complete, you can view a quick summary on the home page, or you can navigate to the Reports section to get a more detailed breakdown of the data. From there, you can export the report to an excel sheet.
+
+## Home Page
+On the home page, you can begin importing CCD data. There are two current options for doing so. You can upload CCD's from a directory containing the xml files. If you are using UCR and have loaded CCD's into the repository, you can pull documents from there using the "Repository Import." Within the Start Import button, you will notice a settings icon. Click on this to customize your import! You can choose which sections you would like to profile or not profile. Once you are ready, simply click Start Import. When your report has been generated, you will see a card pop up below in the "Summary of Imported CCDA Data" section. This card will tell you what sections were profiled in your report(as a percentage).
+
+## Reports Page
+On the Reports page, you can view the data that was imported/profiled. Click on a section to expand the details and see the values for the individual fields. **NOTE: Metadata is not an actual section that was profiled. Instead, it contains information on all of the sections contained within the CCD's and which of those contain actual data(some sections are sent but not populated with any data, as is indicated by [section](no data))**. Any fields/sections that were not found will be grey, indicating that they were never encountered. Optionally, you can export the data to an Excel spreadsheet. Similar to imports, exports allow you to configure which sections you would like to include in the Excel spreadsheet. There is also an option to deidentify typical fields that contain PHI/identifying information. As is noted, this is not a 100% guarantee that all PHI will be removed. **To avoid issues with PHI, please review your data if you intend to share the export.**
+
+## Configuration Page
+The configuration page allows users to interact with the backend from the frontend. There are three tabs/pages here: Edit XSLT, Test XSLT, and Manage Data. Each section that is profiled has an associated XSLT block that is used to extract data from the CCD documents. On the Edit XSLT tab, users can quickly modify Xpaths for a certain field in a section. For example, if MRN's are coming in a different field, users can modify the Xpath on the fly to capture that data. The next tab, Test XSLT, allows users to validate the XSLT against a CCD and view the output. This is especially helpful when making changes via the frontend. Manage Data allows the user to delete generated profiling reports 1 by 1 or to erase all data at once. **NOTE: this action cannot be undone, proceed with caution!**
