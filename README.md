@@ -14,7 +14,7 @@ It supports both manual and automated (ZPM/IPM) installation, offers a dynamic A
 
 ### Configure Web Applications
 
-#### CSP/ZEN Web Application(see https://github.com/LEADNorthLLC/CCDProfiler/blob/main/IRIS/APIWebService.png](https://github.com/LEADNorthLLC/External-CCDProfiler/blob/main/IRIS/APIWebService.png)
+#### CSP/ZEN Web Application(see https://github.com/LEADNorthLLC/External-CCDProfiler/blob/main/IRIS/WebService.png)
 - **Name:** `/csp/LeadNorth`
 - **Description:** `LEAD North CCD Profiling Tool`
 - **Settings to configure:**
@@ -23,7 +23,7 @@ It supports both manual and automated (ZPM/IPM) installation, offers a dynamic A
   - Under **Security Settings**, select your desired authentication methods
   - Under **CSP Files Physical Path**, specify the path to your installed `index.html` file (from "Deploy Frontend Files")
 
-#### REST Web Application(see https://github.com/LEADNorthLLC/CCDProfiler/blob/main/IRIS/WebService.png)
+#### REST Web Application(see https://github.com/LEADNorthLLC/External-CCDProfiler/blob/main/IRIS/APIWebService.png)
 - **Name:** `/csp/LeadNorth/api`
 - **Description:** `LEAD North CCD Profiling Tool APIs`
 - **Dispatch class:** `LEADNorth.REST.Handler`
