@@ -14,7 +14,7 @@ It supports both manual and automated (ZPM/IPM) installation, offers a dynamic A
 
 ### Configure Web Applications
 
-#### CSP/ZEN Web Application(see https://github.com/LEADNorthLLC/CCDProfiler/blob/main/IRIS/APIWebService.png)
+#### CSP/ZEN Web Application(see https://github.com/LEADNorthLLC/CCDProfiler/blob/main/IRIS/APIWebService.png](https://github.com/LEADNorthLLC/External-CCDProfiler/blob/main/IRIS/APIWebService.png)
 - **Name:** `/csp/LeadNorth`
 - **Description:** `LEAD North CCD Profiling Tool`
 - **Settings to configure:**
