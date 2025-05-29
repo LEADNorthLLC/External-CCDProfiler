@@ -33,7 +33,7 @@ It supports both manual and automated (ZPM/IPM) installation, offers a dynamic A
 ## Option 2(ZPM/IPM):
 - Download this repository as a zip file.
 - Extract all contents to a folder on your machine.
-- In terminal, open the ZPM shell and enter the following: load <path to extracted folder>
+- In terminal, open the ZPM shell and enter the following: load "path-to-your-folder"
 - Open the tool by navigating to http://[server]:[port]/csp/LeadNorth/index.html#/index
 
 
