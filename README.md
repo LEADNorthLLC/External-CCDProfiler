@@ -35,6 +35,7 @@ It supports both manual and automated (ZPM/IPM) installation, offers a dynamic A
 - Extract all contents to a folder on your machine.
 - In terminal, open the ZPM shell and enter the following: load "path-to-your-folder"
 - Open the tool by navigating to http://[server]:[port]/csp/LeadNorth/index.html#/index
+- NOTE: If installing version 1.0.0 from the Open Exchange, you must install the tool in the "USER" namespace. This issue has been fixed in later versions. For the latest, visit the Github repo
 
 
 # Getting Started
