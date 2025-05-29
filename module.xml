@@ -33,7 +33,7 @@
         UnauthenticatedEnabled="0"
         UseSessionCookie="2"
       />
-	  <WebApplication
+	    <WebApplication
 		Url="/csp/LeadNorth"
 		NameSpace="{$namespace}"
 		DeployPath="Angular/dist/ln-dpt"
@@ -41,7 +41,7 @@
 		CookiePath="/csp/LeadNorth/"
 		DefaultTimeout="900"
 		Description="LeadNorth's CCD profiler"
-        MatchRoles=":%All" 
+       		MatchRoles=":%All" 
 		ServeFiles="1"
 		ServeFilesTimeout="3600"
 		Recurse="1"
