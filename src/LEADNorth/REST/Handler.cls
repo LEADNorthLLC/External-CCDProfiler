@@ -454,7 +454,7 @@ ClassMethod GenerateExcelReport() As %String
     If sectionsString = "" {
         Set sectionsString = "patient,encompassingEncounter,encounters,metadata,advanceDirective,allergy,diagnosis,familyHistory,functionalStatus,goals,implants,immunizations,medications,payer,planOfCare,problems,procedures,results,socialHistory,vitalSigns"
     } Else {
-        Set sectionsString = "metadata"_sectionsString
+        Set sectionsString = "metadata,"_sectionsString
     }
 
     // Write Excel-compatible XML headers and namespace declarations
